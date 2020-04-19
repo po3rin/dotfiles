@@ -15,28 +15,46 @@ Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'natebosch/vim-lsc'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
+Plug 'po3rin/vim-gofmtmd'
+Plug 'vim-jp/vital.vim'
+Plug 'cohama/lexima.vim'
 let g:lsp_async_completion = 1
 call plug#end()
 
 "common
 set autowrite
 inoremap jj <esc>
+" 0番レジスタを常にペースト
+nnoremap p "0p
 autocmd ColorScheme * highlight Normal ctermbg=none
 autocmd ColorScheme * highlight LineNr ctermbg=none
 colorscheme iceberg
+" バックアップファイルを作らない
+set nobackup
+" スワップファイルを作らない
+set noswapfile
+" 編集中のファイルが変更されたら自動で読み直す
+set autoread
+" バッファが編集中でもその他のファイルを開けるように
+set hidden
+" 入力中のコマンドをステータスに表示する
+set showcmd
+set nocompatible
+set wildmenu
 set number
 set fenc=utf-8
 set nobackup
-set noswapfile
-set autoread
 set clipboard=unnamed,autoselect
 set wildmode=list:longest
-inoremap { {}<LEFT>
-inoremap [ []<LEFT>
-inoremap ( ()<LEFT>
-inoremap " ""<LEFT>
-inoremap ' ''<LEFT>
+set relativenumber
+set smartindent
+set hlsearch
+" インデント"
+vnoremap < <gv
+vnoremap > >gv
+
 map <C-g> :Gdiff<CR>
+map <C-j> :NERDTreeToggle<CR>
 
 " golang
 map <C-n> :cnext<CR>
@@ -48,7 +66,6 @@ map <C-i> :GoImplements<CR>
 map <C-f> :GoFillStruct<CR>
 map <C-r> :GoRename<CR>
 map <C-e> :GoIfErr<CR>
-map <C-j> :NERDTreeToggle<CR>
 map <C-a> :GoAddTags<CR>
 nnoremap <leader>a :cclose<CR>
 nnoremap <buffer> <silent> gd :LspDefinition<cr>
@@ -81,7 +98,6 @@ let g:go_highlight_operators = 1
 let g:go_highlight_extra_types = 1
 let g:go_highlight_function_calls = 1
 
-
 "golsp
 if executable('golsp')
   augroup LspGo
@@ -94,3 +110,6 @@ if executable('golsp')
     autocmd FileType go setlocal omnifunc=lsp#complete
   augroup END
 endif
+
+" gofmtmd
+let g:gofmtmd_auto_fmt = 1
