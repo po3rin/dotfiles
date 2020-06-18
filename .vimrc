@@ -1,4 +1,4 @@
-"plugin
+"plugin ----------------------------------
 call plug#begin()
 Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 Plug 'AndrewRadev/splitjoin.vim'
@@ -18,12 +18,37 @@ Plug 'tpope/vim-fugitive'
 Plug 'po3rin/vim-gofmtmd'
 Plug 'vim-jp/vital.vim'
 Plug 'cohama/lexima.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'iamcco/markdown-preview.nvim', { 'for': ['markdown'], 'do': 'cd app & yarn install'  }
+Plug 'ryanoasis/vim-devicons'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 let g:lsp_async_completion = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'default'
 call plug#end()
 
-"common
+
+" common ---------------------------------
 set autowrite
+set encoding=UTF-8
 inoremap jj <esc>
+
+" <Leader>というプレフィックスキーにスペースを使用する
+let g:mapleader = "\<Space>"
+
+" スペース + wでファイル保存
+nnoremap <Leader>w :w<CR>
+nnoremap <Leader>q :q<CR>
+nnoremap <Leader>wq :wq<CR>
+
+" Escを2回押すとハイライトを消す
+nnoremap <Esc><Esc> :nohlsearch<CR>
+
+" スペース + . でvimrcを開く
+nnoremap <Leader>. :new ~/.vimrc<CR>
+
 " 0番レジスタを常にペースト
 nnoremap p "0p
 autocmd ColorScheme * highlight Normal ctermbg=none
@@ -53,10 +78,43 @@ set hlsearch
 vnoremap < <gv
 vnoremap > >gv
 
-map <C-g> :Gdiff<CR>
 map <C-j> :NERDTreeToggle<CR>
 
-" golang
+" comment -------------------------------
+" ref) https://github.com/tpope/vim-commentary
+
+
+" fugitive -------------------------------
+" ref) https://github.com/tpope/vim-fugitive
+map <C-g> :Gdiff<CR>
+
+
+" vim-devicons ----------------------------
+" ref) https://qiita.com/park-jh/items/4358d2d33a78ec0a2b5c
+
+set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ 12
+set encoding=utf-8
+
+" フォルダアイコンを表示
+let g:WebDevIconsNerdTreeBeforeGlyphPadding = ""
+let g:WebDevIconsUnicodeDecorateFolderNodes = v:true
+" after a re-source, fix syntax matching issues (concealing brackets):
+if exists('g:loaded_webdevicons')
+	call webdevicons#refresh()
+endif
+
+
+" fzf -----------------------------
+" ref) https://qiita.com/Sa2Knight/items/6635af9fc648a5431685
+nnoremap <silent> ,f :GFiles<CR>
+nnoremap <silent> ,F :GFiles?<CR>
+nnoremap <silent> ,b :Buffers<CR>
+nnoremap <silent> ,l :BLines<CR>
+nnoremap <silent> ,h :History<CR>
+nnoremap <silent> ,m :Mark<CR>
+
+
+" golang --------------------------
 map <C-n> :cnext<CR>
 map <C-m> :cprevious<CR>
 map <C-d> :GoDescribe<CR>
@@ -74,16 +132,16 @@ nnoremap <buffer> <silent> <C-t> <C-O><cr>
 
 let mapleader = "\<Space>"
 let g:go_fmt_command = "goimports"
-let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
-let g:go_metalinter_autosave = 1
+let g:go_metalinter_enabled = ['vet', 'errcheck']
+let g:go_metalinter_autosave = 0
 let g:go_auto_type_info = 1
 let g:go_auto_sameids = 1
-let g:go_def_mapping_enabled = 0
+let g:go_def_mapping_enabled = 1
 let g:go_gocode_propose_builtins = 0
 
-autocmd FileType go nmap <leader>b  <Plug>(go-build)
-autocmd FileType go nmap <leader>r  <Plug>(go-run)
-autocmd FileType go nmap <leader>t  <Plug>(go-test)
+autocmd FileType go nmap <leader>b <Plug>(go-build)
+autocmd FileType go nmap <leader>r <Plug>(go-run)
+autocmd FileType go nmap <leader>t <Plug>(go-test)
 autocmd FileType go nmap <Leader>c <Plug>(go-coverage-toggle)
 autocmd FileType go nmap <Leader>i <Plug>(go-info)
 autocmd FileType go nmap <leader>s <Plug>(go-def-split)
