@@ -1,5 +1,6 @@
 "plugin ----------------------------------
 call plug#begin()
+
 " color
 Plug 'cocopon/iceberg.vim'
 
@@ -162,8 +163,33 @@ map ;r <Plug>(operator-replace)
 " ref) https://github.com/easymotion/vim-easymotion
 map ;e <Plug>(easymotion-bd-f)
 
+
 " lsp -----------------------
-" ref) https://mattn.kaoriya.net/software/vim/20191231213507.htm
+" ref) https://mattn.kaoriya.net/software/vim/20191231213507.html
+
+function! s:on_lsp_buffer_enabled() abort
+  setlocal omnifunc=lsp#complete
+  setlocal signcolumn=yes
+
+  nmap <buffer> gd <plug>(lsp-definition)
+  nmap <buffer> rn <plug>(lsp-rename)
+  nmap <buffer> rf <plug>(lsp-references)
+  nmap <buffer> im <plug>(lsp-implimentation)
+  nmap <buffer> ne <plug>(lsp-next-error)
+  nmap <buffer> pe <plug>(lsp-previous-error)
+  nmap <buffer> pd <plug>(lsp-peek-definition)
+  nmap <buffer> ho <plug>(lsp-hover)
+endfunction
+
+augroup lsp_install
+  au!
+  autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+let g:asyncomplete_auto_popup = 1
+let g:asyncomplete_popup_delay = 200
+let g:lsp_text_edit_enabled = 1
+let g:lsp_async_completion = 1
 
 " TODO: replace vim-lsp-settings
 " if executable('gopls')
@@ -174,39 +200,6 @@ map ;e <Plug>(easymotion-bd-f)
 "         \ })
 "     autocmd BufWritePre *.go LspDocumentFormatSync
 " endif
-
-function! s:on_lsp_buffer_enabled() abort
-  setlocal omnifunc=lsp#complete
-  set completeopt^=popup
-
-  " enable signs
-  let g:lsp_signs_error = {'text': 'ｳﾎ'}
-  let g:lsp_signs_warning = {'text': '🍌'}
-  let g:lsp_signs_enabled = 1
-
-  setlocal omnifunc=lsp#complete
-  setlocal signcolumn=yes
-  nmap <buffer> gd <plug>(lsp-definition)
-  nmap <buffer> rn <plug>(lsp-rename)
-  nmap <buffer> rf <plug>(lsp-references)
-  nmap <buffer> im <plug>(lsp-implimentation)
-  nmap <buffer> ne <plug>(lsp-next-error)
-  nmap <buffer> pe <plug>(lsp-previous-error)
-  nmap <buffer> pd <plug>(lsp-peek-definition)
-  nmap <buffer> ho <plug>(lsp-hover)
-  inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
-endfunction
-
-augroup lsp_install
-  au!
-  autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-augroup END
-
-
-let g:asyncomplete_auto_popup = 1
-let g:asyncomplete_popup_delay = 200
-let g:lsp_text_edit_enabled = 1
-let g:lsp_async_completion = 1
 
 " gofmtmd
 let g:gofmtmd_auto_fmt = 1
