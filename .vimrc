@@ -23,6 +23,7 @@ Plug 'hrsh7th/vim-vsnip-integ'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'chengzeyi/fzf-preview.vim'
+Plug 'ctrlpvim/ctrlp.vim'
 
 " airline
 Plug 'vim-airline/vim-airline'
@@ -36,7 +37,6 @@ Plug 'ryanoasis/vim-devicons'
 " other
 Plug 'easymotion/vim-easymotion'
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'natebosch/vim-lsc'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -100,6 +100,14 @@ if has("mac")
 else
   set clipboard^=unnamedplus
 endif
+
+" 補完 -------------------------------
+
+" 補完表示時のEnterで改行をしない (TODO: fix)
+inoremap <expr><CR>  pumvisible() ? "<C-y>" : "<CR>"
+set completeopt=menuone,noinsert
+inoremap <expr><C-n> pumvisible() ? "<Down>" : "<C-n>"
+inoremap <expr><C-p> pumvisible() ? "<Up>" : "<C-p>"
 
 
 " tree -------------------------------
@@ -169,8 +177,7 @@ map ;e <Plug>(easymotion-bd-f)
 
 function! s:on_lsp_buffer_enabled() abort
   setlocal omnifunc=lsp#complete
-  setlocal signcolumn=yes
-  set completeopt^=popup
+  " set completeopt^=popup
 
   nmap <buffer> gd <plug>(lsp-definition)
   nmap <buffer> rn <plug>(lsp-rename)
@@ -180,7 +187,6 @@ function! s:on_lsp_buffer_enabled() abort
   nmap <buffer> pe <plug>(lsp-previous-error)
   nmap <buffer> pd <plug>(lsp-peek-definition)
   nmap <buffer> ho <plug>(lsp-hover)
-  inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
 endfunction
 
 augroup lsp_install
