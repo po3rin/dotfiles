@@ -1,44 +1,56 @@
 "plugin ----------------------------------
 call plug#begin()
-Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
-Plug 'AndrewRadev/splitjoin.vim'
-Plug 'SirVer/ultisnips'
+" color
 Plug 'cocopon/iceberg.vim'
+
+" LSP
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+Plug 'mattn/vim-lsp-icons'
+
+" Go
+Plug 'mattn/vim-goimports'
+Plug 'po3rin/vim-gofmtmd'
+
+" vsnip
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
+
+" fzf
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'chengzeyi/fzf-preview.vim'
+
+" airline
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" other
+Plug 'easymotion/vim-easymotion'
+Plug 'AndrewRadev/splitjoin.vim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'natebosch/vim-lsc'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
-Plug 'po3rin/vim-gofmtmd'
 Plug 'vim-jp/vital.vim'
 Plug 'cohama/lexima.vim'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
 Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
-Plug 'chengzeyi/fzf-preview.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'for': ['markdown'], 'do': 'cd app & yarn install'  }
 Plug 'ryanoasis/vim-devicons'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'easymotion/vim-easymotion'
-let g:lsp_async_completion = 1
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#formatter = 'default'
+
 call plug#end()
 
 
 " common ---------------------------------
-set autowrite
 set encoding=UTF-8
 inoremap jj <esc>
+set belloff=all
 
 " <Leader>というプレフィックスキーにスペースを使用する
 let g:mapleader = "\<Space>"
@@ -50,9 +62,6 @@ nnoremap ;wq :wq<CR>
 
 " Escを2回押すとハイライトを消す
 nnoremap <Esc><Esc> :nohlsearch<CR>
-
-" スペース + . でvimrcを開く
-nnoremap <Leader>. :new ~/.vimrc<CR>
 
 " 0番レジスタを常にペースト
 nnoremap p "0p
@@ -74,16 +83,38 @@ set wildmenu
 set number
 set fenc=utf-8
 set nobackup
-set clipboard=unnamed,autoselect
 set wildmode=list:longest
 set relativenumber
-set smartindent
+set showmatch "括弧入力時の対応する括弧を表示
 set hlsearch
+
 " インデント"
 vnoremap < <gv
 vnoremap > >gv
 
+" 改行時自動インデント 
+set smartindent
+set autoindent
+
+" undoできる最大数 
+set undolevels=1000
+
+" 他のバッファに移動する時に自動保存
+set autowrite
+
+" クリップボードを共有
+if has("mac")
+  set clipboard+=unnamed
+else
+  set clipboard^=unnamedplus
+endif
+
 nnoremap <silent> ;t :NERDTreeToggle<CR>
+
+" airline ------------------------------
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'default'
+
 
 " comment -------------------------------
 " ref) https://github.com/tpope/vim-commentary
@@ -130,63 +161,54 @@ map ;r <Plug>(operator-replace)
 
 " easy motion ---------------- 
 " ref) https://github.com/easymotion/vim-easymotion
-" map <Leader>e <Plug>(easymotion-prefix)
 map ;e <Plug>(easymotion-bd-f)
 
+" lsp -----------------------
+" ref) https://mattn.kaoriya.net/software/vim/20191231213507.htm
 
-" golang --------------------------
-map <C-n> :cnext<CR>
-map <C-m> :cprevious<CR>
-map <C-d> :GoDescribe<CR>
-map <C-r> :GoReferrers<CR>
-map <C-k> :GoKeyify<CR>
-map <C-i> :GoImplements<CR>
-map <C-f> :GoFillStruct<CR>
-map <C-r> :GoRename<CR>
-map <C-e> :GoIfErr<CR>
-map <C-a> :GoAddTags<CR>
-nnoremap <leader>a :cclose<CR>
-nnoremap <buffer> <silent> gd :LspDefinition<cr>
-nnoremap <buffer> <silent> <C-]> :LspDefinition<cr>
-nnoremap <buffer> <silent> <C-t> <C-O><cr>
-
-let g:go_fmt_command = "goimports"
-let g:go_metalinter_enabled = ['vet', 'errcheck']
-let g:go_metalinter_autosave = 0
-let g:go_auto_type_info = 1
-let g:go_auto_sameids = 1
-let g:go_def_mapping_enabled = 1
-let g:go_gocode_propose_builtins = 0
-
-autocmd FileType go nmap <leader>b <Plug>(go-build)
-autocmd FileType go nmap <leader>r <Plug>(go-run)
-autocmd FileType go nmap <leader>t <Plug>(go-test)
-autocmd FileType go nmap <Leader>c <Plug>(go-coverage-toggle)
-autocmd FileType go nmap <Leader>i <Plug>(go-info)
-autocmd FileType go nmap <leader>s <Plug>(go-def-split)
-autocmd FileType go nmap <leader>v <Plug>(go-def-vertical)
-autocmd BufNewFile,BufRead *.go setlocal noexpandtab tabstop=4 shiftwidth=4
-
-"golang color
-let g:go_highlight_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_extra_types = 1
-let g:go_highlight_function_calls = 1
-
-"golsp
-if executable('golsp')
-  augroup LspGo
-    au!
-    autocmd User lsp_setup call lsp#register_server({
-        \ 'name': 'go-lang',
-        \ 'cmd': {server_info->['golsp', '-mode', 'stdio']},
+" TODO: replace vim-lsp-settings
+if executable('gopls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'gopls',
+        \ 'cmd': {server_info->['gopls']},
         \ 'whitelist': ['go'],
         \ })
-    autocmd FileType go setlocal omnifunc=lsp#complete
-  augroup END
+    autocmd BufWritePre *.go LspDocumentFormatSync
 endif
+
+function! s:on_lsp_buffer_enabled() abort
+  setlocal omnifunc=lsp#complete
+  set completeopt^=popup
+
+  " enable signs
+  let g:lsp_signs_error = {'text': 'ｳﾎ'}
+  let g:lsp_signs_warning = {'text': '🍌'}
+  let g:lsp_signs_enabled = 1
+
+  setlocal omnifunc=lsp#complete
+  setlocal signcolumn=yes
+  nmap <buffer> gd <plug>(lsp-definition)
+  nmap <buffer> rn <plug>(lsp-rename)
+  nmap <buffer> rf <plug>(lsp-references)
+  nmap <buffer> im <plug>(lsp-implimentation)
+  nmap <buffer> ne <plug>(lsp-next-error)
+  nmap <buffer> pe <plug>(lsp-previous-error)
+  nmap <buffer> pd <plug>(lsp-peek-definition)
+  nmap <buffer> ho <plug>(lsp-hover)
+  inoremap <expr> <cr> pumvisible() ? "\<c-y>\<cr>" : "\<cr>"
+endfunction
+
+augroup lsp_install
+  au!
+  autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+
+
+let g:asyncomplete_auto_popup = 1
+let g:asyncomplete_popup_delay = 200
+let g:lsp_text_edit_enabled = 1
+let g:lsp_async_completion = 1
 
 " gofmtmd
 let g:gofmtmd_auto_fmt = 1
+
