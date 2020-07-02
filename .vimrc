@@ -6,6 +6,7 @@ Plug 'SirVer/ultisnips'
 Plug 'cocopon/iceberg.vim'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdtree'
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'prabirshrestha/async.vim'
@@ -20,10 +21,14 @@ Plug 'vim-jp/vital.vim'
 Plug 'cohama/lexima.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'kana/vim-operator-user'
+Plug 'kana/vim-operator-replace'
+Plug 'chengzeyi/fzf-preview.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'for': ['markdown'], 'do': 'cd app & yarn install'  }
 Plug 'ryanoasis/vim-devicons'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'easymotion/vim-easymotion'
 let g:lsp_async_completion = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'default'
@@ -39,9 +44,9 @@ inoremap jj <esc>
 let g:mapleader = "\<Space>"
 
 " スペース + wでファイル保存
-nnoremap <Leader>w :w<CR>
-nnoremap <Leader>q :q<CR>
-nnoremap <Leader>wq :wq<CR>
+nnoremap ;w :w<CR>
+nnoremap ;q :q<CR>
+nnoremap ;wq :wq<CR>
 
 " Escを2回押すとハイライトを消す
 nnoremap <Esc><Esc> :nohlsearch<CR>
@@ -78,7 +83,7 @@ set hlsearch
 vnoremap < <gv
 vnoremap > >gv
 
-map <C-j> :NERDTreeToggle<CR>
+nnoremap <silent> ;t :NERDTreeToggle<CR>
 
 " comment -------------------------------
 " ref) https://github.com/tpope/vim-commentary
@@ -106,12 +111,27 @@ endif
 
 " fzf -----------------------------
 " ref) https://qiita.com/Sa2Knight/items/6635af9fc648a5431685
-nnoremap <silent> ,f :GFiles<CR>
-nnoremap <silent> ,F :GFiles?<CR>
-nnoremap <silent> ,b :Buffers<CR>
-nnoremap <silent> ,l :BLines<CR>
-nnoremap <silent> ,h :History<CR>
-nnoremap <silent> ,m :Mark<CR>
+" ref) https://github.com/chengzeyi/fzf-preview.vim
+
+nnoremap <silent> ;f :GFiles<CR>
+nnoremap <silent> ;F :GFiles?<CR>
+nnoremap <silent> ;c :FZFGGrep<CR>
+nnoremap <silent> ;b :Buffers<CR>
+nnoremap <silent> ;l :BLines<CR>
+nnoremap <silent> ;h :History<CR>
+nnoremap <silent> ;m :Mark<CR>
+
+
+" replace ----------------------
+" ref) https://liginc.co.jp/469142
+" ref) http://engineerspirit.com/2017/06/24/post-1424/
+map ;r <Plug>(operator-replace)
+
+
+" easy motion ---------------- 
+" ref) https://github.com/easymotion/vim-easymotion
+" map <Leader>e <Plug>(easymotion-prefix)
+map ;e <Plug>(easymotion-bd-f)
 
 
 " golang --------------------------
@@ -130,7 +150,6 @@ nnoremap <buffer> <silent> gd :LspDefinition<cr>
 nnoremap <buffer> <silent> <C-]> :LspDefinition<cr>
 nnoremap <buffer> <silent> <C-t> <C-O><cr>
 
-let mapleader = "\<Space>"
 let g:go_fmt_command = "goimports"
 let g:go_metalinter_enabled = ['vet', 'errcheck']
 let g:go_metalinter_autosave = 0
