@@ -44,6 +44,8 @@ Plug 'vim-jp/vital.vim'
 Plug 'cohama/lexima.vim'
 Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
+
+" markdown
 Plug 'iamcco/markdown-preview.nvim', { 'for': ['markdown'], 'do': 'cd app & yarn install'  }
 
 call plug#end()
