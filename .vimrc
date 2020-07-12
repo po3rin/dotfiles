@@ -129,7 +129,7 @@ let g:airline#extensions#tabline#formatter = 'default'
 
 " comment -------------------------------
 " ref) https://github.com/tpope/vim-commentary
-
+" gc
 
 " fugitive -------------------------------
 " ref) https://github.com/tpope/vim-fugitive
@@ -189,6 +189,7 @@ function! s:on_lsp_buffer_enabled() abort
   nmap <buffer> pe <plug>(lsp-previous-error)
   nmap <buffer> pd <plug>(lsp-peek-definition)
   nmap <buffer> ho <plug>(lsp-hover)
+  nmap <buffer> ac <plug>(lsp-code-action)
 endfunction
 
 augroup lsp_install
