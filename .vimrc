@@ -44,17 +44,20 @@ Plug 'vim-jp/vital.vim'
 Plug 'cohama/lexima.vim'
 Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
+Plug 'ConradIrwin/vim-bracketed-paste'
+
+" window size
+Plug 'simeji/winresizer'
 
 " markdown
 Plug 'iamcco/markdown-preview.nvim', { 'for': ['markdown'], 'do': 'cd app & yarn install'  }
 
 call plug#end()
 
-
 " common ---------------------------------
 set encoding=UTF-8
 inoremap jj <esc>
-set belloff=all
+set belloff=all "vimで発生するbellをmute
 
 " ファイル保存
 nnoremap ;w :w<CR>
@@ -68,15 +71,12 @@ nnoremap p "0p
 
 set nobackup " バックアップファイルを作らない
 set noswapfile " スワップファイルを作らない
+
 set autoread " 編集中のファイルが変更されたら自動で読み直す
 set hidden " バッファが編集中でもその他のファイルを開けるように
 set showcmd " 入力中のコマンドをステータスに表示する
 set nocompatible "vi 互換モードで動作させない
-set number "行数表示"
-set fenc=utf-8 "utf-8にする"
-set nobackup "バックアップを作らない
 set wildmode=list:longest "タブ補完モード
-set relativenumber ""相対行数
 set showmatch "括弧入力時の対応する括弧を表示
 set hlsearch "検索語句のハイライト
 
@@ -96,12 +96,12 @@ set undolevels=1000
 " 他のバッファに移動する時に自動保存
 set autowrite
 
-" クリップボードを共有
-if has("mac")
-  set clipboard+=unnamed
-else
-  set clipboard^=unnamedplus
-endif
+" " クリップボードを共有
+" if has("mac")
+"   set clipboard+=unnamed
+" else
+"   set clipboard^=unnamedplus
+" endif
 
 " 補完 -------------------------------
 
@@ -113,7 +113,7 @@ inoremap <expr><C-p> pumvisible() ? "<Up>" : "<C-p>"
 
 
 " tree -------------------------------
-nnoremap <silent> ;t :NERDTreeToggle<CR>
+nnoremap <silent> tt :NERDTreeToggle<CR>
 
 
 " color scheme ------------------------
@@ -184,12 +184,12 @@ function! s:on_lsp_buffer_enabled() abort
   nmap <buffer> gd <plug>(lsp-definition)
   nmap <buffer> rn <plug>(lsp-rename)
   nmap <buffer> rf <plug>(lsp-references)
-  nmap <buffer> im <plug>(lsp-implimentation)
-  nmap <buffer> ne <plug>(lsp-next-error)
-  nmap <buffer> pe <plug>(lsp-previous-error)
-  nmap <buffer> pd <plug>(lsp-peek-definition)
-  nmap <buffer> ho <plug>(lsp-hover)
-  nmap <buffer> ac <plug>(lsp-code-action)
+  nmap <buffer> ;i <plug>(lsp-implimentation)
+  nmap <buffer> en <plug>(lsp-next-error)
+  nmap <buffer> ep <plug>(lsp-previous-error)
+  nmap <buffer> dp <plug>(lsp-peek-definition)
+  nmap <buffer> ;h <plug>(lsp-hover)
+  nmap <buffer> ;ca <plug>(lsp-code-action)
 endfunction
 
 augroup lsp_install
