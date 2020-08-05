@@ -11,6 +11,9 @@ Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 Plug 'mattn/vim-lsp-icons'
 
+Plug 'Shougo/deoplete.nvim'
+Plug 'lighttiger2505/deoplete-vim-lsp'
+
 " Go
 Plug 'mattn/vim-goimports'
 Plug 'po3rin/vim-gofmtmd'
@@ -45,8 +48,10 @@ Plug 'cohama/lexima.vim'
 Plug 'kana/vim-operator-user'
 Plug 'kana/vim-operator-replace'
 Plug 'ConradIrwin/vim-bracketed-paste'
+Plug 'thinca/vim-quickrun'
 
 " window size
+" Ctrl + e
 Plug 'simeji/winresizer'
 
 " markdown
@@ -97,11 +102,11 @@ set undolevels=1000
 set autowrite
 
 " " クリップボードを共有
-" if has("mac")
-"   set clipboard+=unnamed
-" else
-"   set clipboard^=unnamedplus
-" endif
+if has("mac")
+  set clipboard+=unnamed
+else
+  set clipboard^=unnamedplus
+endif
 
 " 補完 -------------------------------
 
@@ -113,6 +118,7 @@ inoremap <expr><C-p> pumvisible() ? "<Up>" : "<C-p>"
 
 
 " tree -------------------------------
+" make file : m
 nnoremap <silent> tt :NERDTreeToggle<CR>
 
 
@@ -173,6 +179,13 @@ map ;r <Plug>(operator-replace)
 " ref) https://github.com/easymotion/vim-easymotion
 map ;e <Plug>(easymotion-bd-f)
 
+" quickrun ------------------
+map ;r <Plug>(quickrun)
+let g:quickrun_config = {}
+let g:quickrun_config = {
+\'*': {'split': ''},
+\'python': {'command': 'python3'},
+\}
 
 " lsp -----------------------
 " ref) https://mattn.kaoriya.net/software/vim/20191231213507.html
@@ -203,6 +216,29 @@ let g:asyncomplete_auto_popup = 1
 let g:asyncomplete_auto_completeopt = 0
 let g:asyncomplete_popup_delay = 200
 let g:lsp_text_edit_enabled = 1
+
+" auto complete ----------------
+call deoplete#custom#option({
+    \ 'auto_complete': v:true,
+    \ 'min_pattern_length': 2,
+    \ 'auto_complete_delay': 0,
+    \ 'auto_refresh_delay': 20,
+    \ 'refresh_always': v:true,
+    \ 'smart_case': v:true,
+    \ 'camel_case': v:true,
+    \ })
+let s:use_lsp_sources = ['lsp', 'dictionary', 'file']
+call deoplete#custom#option('sources', {
+    \ 'go': s:use_lsp_sources,
+    \ 'python': s:use_lsp_sources,
+    \ 'vim': ['vim', 'buffer', 'dictionary', 'file'],
+    \})
+
+" python -----------------------
+augroup LspAutoFormatting
+    autocmd!
+    autocmd BufWritePre *.py LspDocumentFormatSync
+augroup END
 
 " gofmtmd -----------------------
 let g:gofmtmd_auto_fmt = 1
