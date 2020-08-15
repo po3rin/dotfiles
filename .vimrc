@@ -120,6 +120,7 @@ inoremap <expr><C-p> pumvisible() ? "<Up>" : "<C-p>"
 " tree -------------------------------
 " make file : m
 nnoremap <silent> tt :NERDTreeToggle<CR>
+let NERDTreeShowHidden=1
 
 
 " color scheme ------------------------
