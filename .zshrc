@@ -1,0 +1,1 @@
+/Users/hiromu.nakamura/.zprezto/runcoms/zshrc
