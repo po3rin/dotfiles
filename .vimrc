@@ -1,6 +1,10 @@
 "plugin ----------------------------------
 call plug#begin()
 
+" beta ----------
+Plug 'Shougo/ddc.vim'
+Plug 'vim-denops/denops.vim'
+
 " color
 Plug 'cocopon/iceberg.vim'
 Plug 'markvincze/panda-vim'
@@ -16,9 +20,10 @@ Plug 'prabirshrestha/vim-lsp'
 Plug 'mattn/vim-lsp-settings'
 Plug 'mattn/vim-lsp-icons'
 Plug 'hashivim/vim-terraform'
+Plug 'prabirshrestha/async.vim'
 
-Plug 'Shougo/deoplete.nvim'
-Plug 'lighttiger2505/deoplete-vim-lsp'
+" Plug 'Shougo/deoplete.nvim'
+" Plug 'lighttiger2505/deoplete-vim-lsp'
 
 " fmt
 Plug 'google/vim-maktaba'
@@ -63,6 +68,7 @@ Plug 'thinca/vim-quickrun'
 Plug 'osyo-manga/vim-over'
 Plug 'terryma/vim-expand-region'
 Plug 'tpope/vim-surround'
+Plug 'mattn/vim-sonictemplate'
 
 " window size
 " Ctrl + e
@@ -138,6 +144,9 @@ nnoremap ]q :cnext<CR>
 nnoremap [Q :<C-u>cfirst<CR>
 nnoremap ]Q :<C-u>clast<CR>
 autocmd QuickFixCmdPost *grep* cwindow
+
+" コメントアウト
+" gcc
 
 " 改行削除
 " gJ
@@ -358,6 +367,8 @@ map ;e <Plug>(easymotion-bd-f)
 function! s:on_lsp_buffer_enabled() abort
   setlocal omnifunc=lsp#complete
   " set completeopt^=popup
+  setlocal signcolumn=yes
+  if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
 
   nmap <buffer> gd <plug>(lsp-definition)
   nmap <buffer> rn <plug>(lsp-rename)
@@ -368,6 +379,7 @@ function! s:on_lsp_buffer_enabled() abort
   nmap <buffer> dp <plug>(lsp-peek-definition)
   nmap <buffer> ;h <plug>(lsp-hover)
   nmap <buffer> ;ca <plug>(lsp-code-action)
+  nmap <buffer> ;pd <plug>(lsp-peek-definition)
 endfunction
 
 augroup lsp_install
@@ -383,21 +395,21 @@ let g:asyncomplete_popup_delay = 200
 let g:lsp_text_edit_enabled = 1
 
 " auto complete ----------------
-call deoplete#custom#option({
-    \ 'auto_complete': v:true,
-    \ 'min_pattern_length': 2,
-    \ 'auto_complete_delay': 0,
-    \ 'auto_refresh_delay': 20,
-    \ 'refresh_always': v:true,
-    \ 'smart_case': v:true,
-    \ 'camel_case': v:true,
-    \ })
-let s:use_lsp_sources = ['lsp', 'dictionary', 'file']
-call deoplete#custom#option('sources', {
-    \ 'go': s:use_lsp_sources,
-    \ 'python': s:use_lsp_sources,
-    \ 'vim': ['vim', 'buffer', 'dictionary', 'file'],
-    \})
+" call deoplete#custom#option({
+"     \ 'auto_complete': v:true,
+"     \ 'min_pattern_length': 2,
+"     \ 'auto_complete_delay': 0,
+"     \ 'auto_refresh_delay': 20,
+"     \ 'refresh_always': v:true,
+"     \ 'smart_case': v:true,
+"     \ 'camel_case': v:true,
+"     \ })
+" let s:use_lsp_sources = ['lsp', 'dictionary', 'file']
+" call deoplete#custom#option('sources', {
+"     \ 'go': s:use_lsp_sources,
+"     \ 'python': s:use_lsp_sources,
+"     \ 'vim': ['vim', 'buffer', 'dictionary', 'file'],
+"     \})
 
 " fmt -------------------------
 " https://github.com/google/vim-codefmt
@@ -409,8 +421,8 @@ augroup autoformat_settings
   autocmd FileType gn AutoFormatBuffer gn
   autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
   autocmd FileType java AutoFormatBuffer google-java-format
-  " autocmd FileType python AutoFormatBuffer yapf
-  autocmd FileType python AutoFormatBuffer autopep8
+"  autocmd FileType python AutoFormatBuffer yapf
+"  autocmd FileType python AutoFormatBuffer autopep8
   autocmd FileType rust AutoFormatBuffer rustfmt
   autocmd FileType vue AutoFormatBuffer prettier
 augroup END
@@ -420,12 +432,53 @@ Glaive codefmt plugin[mappings]
 Glaive codefmt google_java_executable="java -jar /Users/hiromu.nakamura/any/jar/google-java-format-1.9-all-deps.jar"
 
 " python -----------------------
-augroup LspAutoFormatting
-    autocmd!
-    autocmd BufWritePre *.py LspDocumentFormatSync
+" augroup LspAutoFormatting
+"   autocmd!
+"   autocmd BufWritePre *.py LspDocumentFormatSync
+" augroup END
+
+" https://scrapbox.io/vimemo/Vim_%E3%81%A7_python_%E3%81%AE%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83%E3%82%92%E6%95%B4%E3%81%88%E3%82%8B_vim-lsp_%E4%BD%BF%E7%94%A8
+let g:lsp_log_verbose = 1
+let g:lsp_log_file = expand('~/vim-lsp.log')
+ 
+augroup MyLsp
+     autocmd!
+     if executable('pyls')
+         autocmd User lsp_setup call lsp#register_server({
+             \ 'name': 'pyls',
+             \ 'cmd': { servier_info -> ['pyls'] },
+             \ 'whitelist': ['python'],
+             \ 'workspace_config': {
+             \   'pyls': {
+             \       'plugins': {
+             \           'jedi_definition': {
+             \               'follow_imports': v:true, 
+             \               'follow_builtin_imports': v:true
+             \           },
+             \ }}}
+             \})
+         autocmd FileType python call s:configure_lsp()
+     endif
 augroup END
+ 
+function! s:configure_lsp() abort
+     " omnifunc を設定
+     setlocal omnifunc=lsp#complete
+ 
+     nnoremap <buffer> gd :<C-u>LspDefinition<CR>
+     nnoremap <buffer> gD :<C-u>LspReferences<CR>
+endfunction
+
+ " sign の表示を無効化 ( ALE で行うため )
+let g:lsp_diagnostics_enabled = 0
+
+if isdirectory(".venv")
+	let $VIRTUAL_ENV = '.venv'
+endif
 
 " go -----------------------
 let g:gofmtmd_auto_fmt = 1
 let g:goimports = 1
+
+" ddc ---------------------
 
