@@ -4,9 +4,6 @@ call plug#begin()
 " beta ----------
 Plug 'Shougo/ddc.vim'
 Plug 'vim-denops/denops.vim'
-Plug 'Shougo/ddc-around'
-Plug 'Shougo/ddc-matcher_head'
-Plug 'Shougo/ddc-sorter_rank'
 
 " color
 Plug 'cocopon/iceberg.vim'
@@ -24,6 +21,7 @@ Plug 'mattn/vim-lsp-settings'
 Plug 'mattn/vim-lsp-icons'
 Plug 'hashivim/vim-terraform'
 Plug 'prabirshrestha/async.vim'
+Plug 'mattn/vim-gomod'
 
 " Plug 'Shougo/deoplete.nvim'
 " Plug 'lighttiger2505/deoplete-vim-lsp'
@@ -397,23 +395,6 @@ let g:asyncomplete_auto_completeopt = 0
 let g:asyncomplete_popup_delay = 200
 let g:lsp_text_edit_enabled = 1
 
-" auto complete ----------------
-" call deoplete#custom#option({
-"     \ 'auto_complete': v:true,
-"     \ 'min_pattern_length': 2,
-"     \ 'auto_complete_delay': 0,
-"     \ 'auto_refresh_delay': 20,
-"     \ 'refresh_always': v:true,
-"     \ 'smart_case': v:true,
-"     \ 'camel_case': v:true,
-"     \ })
-" let s:use_lsp_sources = ['lsp', 'dictionary', 'file']
-" call deoplete#custom#option('sources', {
-"     \ 'go': s:use_lsp_sources,
-"     \ 'python': s:use_lsp_sources,
-"     \ 'vim': ['vim', 'buffer', 'dictionary', 'file'],
-"     \})
-
 " fmt -------------------------
 " https://github.com/google/vim-codefmt
 augroup autoformat_settings
@@ -484,48 +465,3 @@ let g:gofmtmd_auto_fmt = 1
 let g:goimports = 1
 
 " ddc ---------------------
-" Customize global settings
-" Use around source.
-" https://github.com/Shougo/ddc-around
-call ddc#custom#patch_global('sources', ['around'])
-
-" Use matcher_head and sorter_rank.
-" https://github.com/Shougo/ddc-matcher_head
-" https://github.com/Shougo/ddc-sorter_rank
-call ddc#custom#patch_global('sourceOptions', {
-      \ '_': {
-      \   'matchers': ['matcher_head'],
-      \   'sorters': ['sorter_rank']},
-      \ })
-
-" Change source options
-call ddc#custom#patch_global('sourceOptions', {
-      \ 'around': {'mark': 'A'},
-      \ })
-call ddc#custom#patch_global('sourceParams', {
-      \ 'around': {'maxSize': 500},
-      \ })
-
-" Customize settings on a filetype
-call ddc#custom#patch_filetype(['c', 'cpp'], 'sources', ['around', 'clangd'])
-call ddc#custom#patch_filetype(['c', 'cpp'], 'sourceOptions', {
-      \ 'clangd': {'mark': 'C'},
-      \ })
-call ddc#custom#patch_filetype('markdown', 'sourceParams', {
-      \ 'around': {'maxSize': 100},
-      \ })
-
-" Mappings
-
-" <TAB>: completion.
-inoremap <silent><expr> <TAB>
-\ pumvisible() ? '<C-n>' :
-\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
-\ '<TAB>' : ddc#map#manual_complete()
-
-" <S-TAB>: completion back.
-inoremap <expr><S-TAB>  pumvisible() ? '<C-p>' : '<C-h>'
-
-" Use ddc.
-call ddc#enable()
-
