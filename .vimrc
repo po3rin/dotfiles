@@ -4,6 +4,7 @@ call plug#begin()
 " beta ----------
 Plug 'Shougo/ddc.vim'
 Plug 'vim-denops/denops.vim'
+Plug 'kqito/vim-easy-replace'
 
 " color
 Plug 'cocopon/iceberg.vim'
@@ -464,4 +465,15 @@ endif
 let g:gofmtmd_auto_fmt = 1
 let g:goimports = 1
 
-" ddc ---------------------
+" replace ---------------------
+" Easy-replaceを使う (デフォルト: <Leader>ra)
+let g:easy_replace_launch_key = ';a'
+
+" ビジュアルモードからeasy-replaceを使う (デフォルト: <Leader>ra)
+let g:easy_replace_launch_in_visual_key = ';a'
+
+" カーソル下の単語に対してeasy-replaceを使う (デフォルト: <Leader>rc)
+let g:easy_replace_launch_cword_key = ';p'
+
+" カーソル下の単語に対してビジュアルモードからeasy-replaceを使う (デフォルト: <Leader>rc)
+let g:easy_replace_launch_cword_in_visual_key = ';p'
