@@ -79,6 +79,9 @@ Plug 'simeji/winresizer'
 " markdown
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 
+" git
+Plug 'lambdalisue/gina.vim'
+
 call plug#end()
 
 " common ---------------------------------
