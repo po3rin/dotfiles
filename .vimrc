@@ -277,6 +277,14 @@ let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 
 " colorscheme iceberg
 color panda
+
+"
+highlight Normal ctermbg=NONE guibg=NONE
+highlight NonText ctermbg=NONE guibg=NONE
+highlight LineNr ctermbg=NONE guibg=NONE
+highlight Folded ctermbg=NONE guibg=NONE
+highlight EndOfBuffer ctermbg=NONE guibg=NONE
+
 " colorscheme xcodedark
 
 " airline ------------------------------
