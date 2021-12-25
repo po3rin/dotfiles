@@ -82,7 +82,13 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 " git
 Plug 'lambdalisue/gina.vim'
 
+" replace all
+Plug 'thinca/vim-qfreplace'
+
 call plug#end()
+
+" alias ----------------------------------
+:command Fr Qfreplace
 
 " common ---------------------------------
 " https://www.soum.co.jp/misc/vim-no-susume/9/
