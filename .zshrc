@@ -24,6 +24,7 @@ alias hi='cd ~/hi'
 alias m3='cd ~/m3'
 alias g='cd "$( ghq list --full-path | peco)"'
 alias gt='git status'
+alias gp='git push origin $(git symbolic-ref --short HEAD)'
 alias vimrc='vim ~/.vimrc'
 alias zshrc='vim ~/.zshrc'
 
