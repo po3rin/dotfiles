@@ -47,3 +47,12 @@ fzf-git-branch() {
         sed "s/.* //"
 }
 alias ch='fzf-git-branch'
+
+# fuzzy open
+function peco-browser() {
+    selected_repo="$(ghq list | peco)"
+    if [ -n "$selected_repo" ]; then
+      open https://${selected_repo}
+    fi
+}
+alias rp='peco-browser'
