@@ -14,3 +14,6 @@ alias m3='cd ~/m3'
 export PYENV_ROOT="$HOME/.pyenv"
 eval "$(pyenv init --path)"
 export PATH="$PYENV_ROOT/bin:$PATH"
+
+# go
+export GOPROXY=on
