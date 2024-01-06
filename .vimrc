@@ -2,6 +2,7 @@
 call plug#begin()
 
 " beta ----------
+Plug 'github/copilot.vim'
 Plug 'Shougo/ddc.vim'
 Plug 'vim-denops/denops.vim'
 Plug 'kqito/vim-easy-replace'
@@ -10,6 +11,9 @@ Plug 'kqito/vim-easy-replace'
 Plug 'cocopon/iceberg.vim'
 Plug 'markvincze/panda-vim'
 Plug 'arzg/vim-colors-xcode'
+
+" comment
+Plug 'tyru/caw.vim'
 
 " test
 Plug 'vim-test/vim-test'
@@ -440,7 +444,7 @@ Glaive codefmt google_java_executable="java -jar /Users/hiromu.nakamura/any/jar/
 " augroup END
 
 " https://scrapbox.io/vimemo/Vim_%E3%81%A7_python_%E3%81%AE%E9%96%8B%E7%99%BA%E7%92%B0%E5%A2%83%E3%82%92%E6%95%B4%E3%81%88%E3%82%8B_vim-lsp_%E4%BD%BF%E7%94%A8
-let g:lsp_log_verbose = 1
+let g:lsp_log_verbose = 0
 let g:lsp_log_file = expand('~/vim-lsp.log')
  
 augroup MyLsp
@@ -481,6 +485,9 @@ endif
 " go -----------------------
 let g:gofmtmd_auto_fmt = 1
 let g:goimports = 1
+
+" html --------------------
+packadd! matchit 
 
 " replace ---------------------
 " Easy-replaceを使う (デフォルト: <Leader>ra)
