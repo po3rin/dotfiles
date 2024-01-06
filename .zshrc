@@ -5,36 +5,105 @@
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
 #
 
+# (for M1) ARM / x86 Switcher
+swa() {
+    if  [[ "$(uname -m)" == arm64 ]]; then
+        arch=x86_64
+    elif [[ "$(uname -m)" == x86_64 ]]; then
+        arch=arm64e
+    fi
+    exec arch -arch $arch "$SHELL" -l
+}
+
+if [ "$(uname -m)" = "arm64" ]; then
+  export PATH="$HOME/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki:/Library/Apple/usr/bin:$PATH"
+  export HOMEBREW_CACHE=~/homebrew/cache
+  export PATH="$PATH:/Users/hiromu.nakamura/homebrew:$PATH"
+  export PATH="$PATH:/Users/hiromu.nakamura/homebrew/bin:$PATH"
+  export PATH="$HOME/homebrew/opt/openssl@3/bin:$PATH"
+  export LDFLAGS="-L/Users/hiromu.nakamura/homebrew/opt/libomp/lib"
+  export CPPFLAGS="-I/Users/hiromu.nakamura/homebrew/opt/libomp/include"
+  export PATH="$HOME/.nodebrew/current/bin:$PATH"
+  # # arm64
+  export PYENV_ROOT="$HOME/.pyenv_arm64"
+  export PATH="$HOME/.pyenv_arm64/bin:$PATH"
+  export GOPATH=$HOME/go
+  export GOBIN=$GOPATH/bin
+  # Homebrew
+  export GOROOT="$(brew --prefix golang)/libexec"
+  # Manual install
+  # export GOROOT=/usr/local/go
+  export PATH=$PATH:$GOPATH/bin
+  export PATH=$PATH:$GOROOT/bin
+  eval "$(pyenv init --path)"
+else
+  export PATH="$HOME/intel/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki:/Library/Apple/usr/bin:$PATH"
+  export HOMEBREW_CACHE=~/intel/homebrew/cache
+  export PATH="$HOME/intel/homebrew/opt/openssl@3/bin:$PATH"
+  export LDFLAGS="-L/Users/hiromu.nakamura/intel/homebrew/opt/libomp/lib"
+  export CPPFLAGS="-I/Users/hiromu.nakamura/intel/homebrew/opt/libomp/include"
+  export PATH="$HOME/.nodebrew/current/bin:$PATH"
+  # x86_64
+  export PYENV_ROOT="$HOME/.pyenv_x64"
+  export PATH="$HOME/.pyenv_x64/bin:$PATH"
+  eval "$(pyenv init --path)"
+  export GOPATH=$HOME/go
+  export GOBIN=$GOPATH/bin
+  # Homebrew
+  export GOROOT="$(brew --prefix golang)/libexec"
+  # Manual install
+  # export GOROOT=/usr/local/go
+  export PATH=$PATH:$GOPATH/bin
+  export PATH=$PATH:$GOROOT/bin
+fi
+
+# editor
+export EDITOR='vim'
+
 # Source Prezto.
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
 # Customize to your needs...
-export HOMEBREW_CACHE=~/homebrew/cache
+
+# PATH
 export PATH="$HOME/.poetry/bin:$PATH"
 export PATH="$HOME/.tfenv/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.embulk/bin:$PATH"
-export PATH="$HOME/homebrew/bin:/Users/hiromu.nakamura/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki:$PATH"
+export PATH="$HOME/.slack/bin:$PATH"
+export PATH="$HOME/.colima/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
+export PATH="$HOME/usr/local/mysql/bin:$PATH"
+export PATH="$HOME/any/bin:$PATH"
+export PATH="$HOME/.colima/bin:$PATH"
+# export PATH="$PATH:/Users/hiromu.nakamura/Library/Application Support/Coursier/bin"
+# export PATH="$HOME/homebrew/opt/coreutils/libexec/gnubin:$PATH"
+# export PATH="$HOME/.nodebrew/current/bin:$PATH"
+export GODEBUG=asyncpreemptoff=1
 
 # alias
 alias ls='ls -G'
-alias hi='cd ~/hi'
-alias m3='cd ~/m3'
+alias k='kubectl'
 alias g='cd "$( ghq list --full-path | peco)"'
 alias gt='git status'
 alias gp='git push origin $(git symbolic-ref --short HEAD)'
 alias vimrc='vim ~/.vimrc'
 alias zshrc='vim ~/.zshrc'
+alias kc='kubectx'
+alias memo='vim ~/ghq/github.com/po3rin/memo'
+alias glpipe='glpipewait -u $(pbpaste) ; tput bel'
+alias date='date'
 
-# python
-export PYENV_ROOT="$HOME/.pyenv"
-eval "$(pyenv init --path)"
-export PATH="$PYENV_ROOT/bin:$PATH"
+export PATH="$(brew --prefix docker)/bin:$PATH"
 
 # 補完
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# histroy
+export HISTSIZE=10000
+export SAVEHIST=1000000
 
 # fuzzy checkout
 fzf-git-branch() {
@@ -46,7 +115,8 @@ fzf-git-branch() {
             --preview 'git log -n 50 --color=always --date=short --pretty="format:%C(auto)%cd %h%d %s" $(sed "s/.* //" <<< {})' |
         sed "s/.* //"
 }
-alias ch='fzf-git-branch'
+
+alias ch='git branch -a | fzf | xargs git checkout'
 
 # fuzzy open
 function peco-browser() {
@@ -56,3 +126,33 @@ function peco-browser() {
     fi
 }
 alias rp='peco-browser'
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/hiromu.nakamura/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/hiromu.nakamura/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/hiromu.nakamura/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/hiromu.nakamura/google-cloud-sdk/completion.zsh.inc'; fi
+
+# k8s
+export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+
+# mysql
+export PATH="$(brew --prefix mysql-client)/bin:$PATH"
+
+kjf() {
+  kubectl get cronjobs --all-namespaces | tr -s ' ' | cut -d ' ' -f 1,2 | tail -n +2 | fzf | xargs kj
+}
+
+# gitlab
+export GITLAB_ACCESS_TOKEN=glpat-HnT-_cJYMs6tZLWYWLnQ
+
+# grpc
+export GRPC_PYTHON_BUILD_SYSTEM_OPENSSL=1
+export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
+
+# ta-lib
+export TA_INCLUDE_PATH="$(brew --prefix ta-lib)/include"
+export TA_LIBRARY_PATH="$(brew --prefix ta-lib)/lib"
+
+# Docker
+export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
