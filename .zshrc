@@ -16,7 +16,7 @@ swa() {
 }
 
 if [ "$(uname -m)" = "arm64" ]; then
-  export PATH="$HOME/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki:/Library/Apple/usr/bin:$PATH"
+  export PATH="$HOME/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki:/Library/Apple/usr/bin:$HOME/.sg:$PATH"
   export HOMEBREW_CACHE=~/homebrew/cache
   export PATH="$PATH:/Users/hiromu.nakamura/homebrew:$PATH"
   export PATH="$PATH:/Users/hiromu.nakamura/homebrew/bin:$PATH"
@@ -37,7 +37,7 @@ if [ "$(uname -m)" = "arm64" ]; then
   export PATH=$PATH:$GOROOT/bin
   eval "$(pyenv init --path)"
 else
-  export PATH="$HOME/intel/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki:/Library/Apple/usr/bin:$PATH"
+  export PATH="$HOME/intel/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki:/Library/Apple/usr/bin:$HOME/.sg:$PATH"
   export HOMEBREW_CACHE=~/intel/homebrew/cache
   export PATH="$HOME/intel/homebrew/opt/openssl@3/bin:$PATH"
   export LDFLAGS="-L/Users/hiromu.nakamura/intel/homebrew/opt/libomp/lib"
@@ -103,7 +103,9 @@ source ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # histroy
 export HISTSIZE=10000
+export HISTFILESIZE=10000
 export SAVEHIST=1000000
+export HISTCONTROL=ignoredups
 
 # fuzzy checkout
 fzf-git-branch() {
@@ -139,9 +141,6 @@ export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 # mysql
 export PATH="$(brew --prefix mysql-client)/bin:$PATH"
 
-kjf() {
-  kubectl get cronjobs --all-namespaces | tr -s ' ' | cut -d ' ' -f 1,2 | tail -n +2 | fzf | xargs kj
-}
 
 # gitlab
 export GITLAB_ACCESS_TOKEN=glpat-HnT-_cJYMs6tZLWYWLnQ
@@ -156,3 +155,62 @@ export TA_LIBRARY_PATH="$(brew --prefix ta-lib)/lib"
 
 # Docker
 export DOCKER_HOST="unix://${HOME}/.colima/default/docker.sock"
+dr(){
+	docker ps -a | awk 'FNR>1' | fzf | awk -F " " '{print $1}' | xargs docker rm
+}
+ds(){
+	docker ps -a | awk 'FNR>1' | fzf | awk -F " " '{print $1}' | xargs docker stop
+}
+di(){
+	docker images | awk 'FNR>1' | fzf | awk -F " " '{print $1}' | xargs docker rmi
+}
+
+# k8s
+autoload -Uz compinit
+compinit
+
+kjf() {
+  kubectl get cronjobs --all-namespaces | tr -s ' ' | cut -d ' ' -f 1,2 | tail -n +2 | fzf | xargs kj
+}
+
+## pod選択
+kgp(){
+	k get ns | awk 'FNR>1' | fzf | awk -F " " '{print $1}' | xargs kubectl get po -n
+}
+## ns選択
+kgn(){
+	k get ns | awk 'FNR>1' | fzf | awk -F " " '{print $1}'
+}
+## nsを引数にpodを選択してログを表示
+klogs () {
+	kubectl get po -n $1 | awk 'FNR>1' | fzf | awk -F " " '{print $1}' | xargs kubectl logs -n $1
+}
+## nsとpodを選択してログを表示
+kl() {
+	klogs $(kgn)
+}
+
+source <(kubectl completion zsh)
+
+
+
+# prompt
+function _kube-current-context () {
+	KUBE_PS1_CONTEXT=$(kubectx -c | tr '-' '\n' | tr '_' '\n' | grep -e prod -e qa -e dev | uniq)
+}
+function _switch-profile () {
+  # set the same name on iterm profile name
+  case "$KUBE_PS1_CONTEXT" in
+   prod ) profile="Prod";;
+   * ) profile="Default";;
+  esac
+  
+  echo -ne "\033]1337;SetProfile=$profile\a"
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _switch-profile
+add-zsh-hook precmd _kube-current-context
+RPROMPT="%F{${prompt_pure_colors[path]}}⎈ ${KUBE_PS1_CONTEXT}%f %F{242}%T%f"
+
+# vim-in-prompt
+set -o vi
