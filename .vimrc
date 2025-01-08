@@ -76,6 +76,9 @@ Plug 'terryma/vim-expand-region'
 Plug 'tpope/vim-surround'
 Plug 'mattn/vim-sonictemplate'
 
+" notify
+Plug 'rcarriga/nvim-notify'
+
 " window size
 " Ctrl + e
 Plug 'simeji/winresizer'
@@ -343,8 +346,9 @@ nmap [c         <Plug>(GitGutterPrevHunk)
 " vim-devicons ----------------------------
 " ref) https://qiita.com/park-jh/items/4358d2d33a78ec0a2b5c
 
-set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ 12
 set encoding=utf-8
+let g:airline_powerline_fonts = 1
+set guifont=DroidSansMono\ Nerd\ Font:h11
 
 " フォルダアイコンを表示
 let g:WebDevIconsNerdTreeBeforeGlyphPadding = ""

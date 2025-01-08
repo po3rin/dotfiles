@@ -4,13 +4,14 @@
 # Authors:
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
 #
+#
 
 # (for M1) ARM / x86 Switcher
 swa() {
     if  [[ "$(uname -m)" == arm64 ]]; then
         arch=x86_64
     elif [[ "$(uname -m)" == x86_64 ]]; then
-        arch=arm64e
+        arch=arm64
     fi
     exec arch -arch $arch "$SHELL" -l
 }
@@ -55,6 +56,7 @@ else
   # export GOROOT=/usr/local/go
   export PATH=$PATH:$GOPATH/bin
   export PATH=$PATH:$GOROOT/bin
+  export PATH="/Users/hiromu.nakamura/intel/homebrew/sbin:$PATH"
 fi
 
 # editor
@@ -90,11 +92,13 @@ alias g='cd "$( ghq list --full-path | peco)"'
 alias gt='git status'
 alias gp='git push origin $(git symbolic-ref --short HEAD)'
 alias vimrc='vim ~/.vimrc'
+alias nvimrc='vim ~/config/.nvim'
 alias zshrc='vim ~/.zshrc'
 alias kc='kubectx'
 alias memo='vim ~/ghq/github.com/po3rin/memo'
 alias glpipe='glpipewait -u $(pbpaste) ; tput bel'
 alias date='date'
+alias mr='open https://rendezvous.m3.com/dashboard/todos'
 
 export PATH="$(brew --prefix docker)/bin:$PATH"
 
@@ -193,7 +197,6 @@ kl() {
 source <(kubectl completion zsh)
 
 
-
 # prompt
 function _kube-current-context () {
 	KUBE_PS1_CONTEXT=$(kubectx -c | tr '-' '\n' | tr '_' '\n' | grep -e prod -e qa -e dev | uniq)
@@ -208,9 +211,39 @@ function _switch-profile () {
   echo -ne "\033]1337;SetProfile=$profile\a"
 }
 autoload -Uz add-zsh-hook
-add-zsh-hook precmd _switch-profile
 add-zsh-hook precmd _kube-current-context
-RPROMPT="%F{${prompt_pure_colors[path]}}⎈ ${KUBE_PS1_CONTEXT}%f %F{242}%T%f"
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _switch-profile
+RPROMPT='%F{${prompt_pure_colors[path]}}⎈:${KUBE_PS1_CONTEXT}%f %F{242}%T%f'
 
 # vim-in-prompt
 set -o vi
+export PATH="/Users/hiromu.nakamura/intel/homebrew/opt/postgresql@12/bin:$PATH"
+export PATH="/Users/hiromu.nakamura/intel/homebrew/opt/postgresql@12/bin:$PATH"
+PROG=sg source /Users/hiromu.nakamura/.sourcegraph/sg.zsh_autocomplete
+# export PATH=~/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/jamf/bin
+# export HOMEBREW_CACHE=~/homebrew/cache
+
+# zoekt
+zsl() {
+  if [ -z "$1" ]; then
+    echo "Usage: zs <query>"
+    return 1
+  fi
+  curl -s "https://fluffy.ai.m3.com/search?q=$1&num=10&ctx=5&format=json" | zoekt-fuzzy-search | xargs open
+}
+
+zs() {
+  if [ -z "$1" ]; then
+    echo "Usage: zs <query>"
+    return 1
+  fi
+  curl -s "http://localhost:6070/search?q=$1&num=10&ctx=5&format=json" | zoekt-fuzzy-search | xargs open
+}
+
+# kill port
+kp() {
+  lsof -i :$1 | awk 'FNR>1' | awk '{print $2}' | xargs kill
+}
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
