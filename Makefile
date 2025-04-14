@@ -1,0 +1,2 @@
+sync:
+	cp -r ~/nvim ./
